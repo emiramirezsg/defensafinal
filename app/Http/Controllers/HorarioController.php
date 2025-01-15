@@ -6,6 +6,7 @@ use App\Models\Curso;
 use App\Models\Horario;
 use App\Models\Materia;
 use App\Models\Paralelo;
+use App\Models\Docente;
 use App\Models\Periodo;
 use Exception;
 use Illuminate\Http\Request;
@@ -13,18 +14,31 @@ use Illuminate\Support\Facades\DB;
 
 class HorarioController extends Controller
 {
-    public function index()
+    public function index(Request $request)
 {
-    $periodos = Periodo::with(['paralelo.curso', 'docente', 'docente.materia', 'horario'])->get();
+    $docenteId = $request->input('docente_id'); // Obtener el docente seleccionado del filtro
+
+    // Obtener los periodos filtrados si se selecciona un docente
+    $periodos = Periodo::with(['paralelo.curso', 'docente', 'docente.materia', 'horario']);
+
+    if ($docenteId) {
+        $periodos = $periodos->where('docente_id', $docenteId); // Filtrar por docente si se selecciona uno
+    }
+
+    $periodos = $periodos->get(); // Obtener los periodos
+
     $horarios = Horario::all();
     $paralelos = Paralelo::with(['curso'])->get();
+    $docentes = Docente::all(); // Obtener todos los docentes para el filtro
 
     return view('horarios.index', [
         'periodos' => $periodos,
         'horarios' => $horarios,
-        'paralelos' => $paralelos
+        'paralelos' => $paralelos,
+        'docentes' => $docentes // Pasar los docentes para el filtro
     ]);
 }
+
 
     public function generarPeriodos($materia, $paralelo, $horasPorSemana, &$horariosOcupadosGlobales)
     {
@@ -109,4 +123,5 @@ public function generarHorarios(Request $request)
         return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
     }
 }
+
 }
