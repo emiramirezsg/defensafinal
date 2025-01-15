@@ -9,6 +9,7 @@ use App\Http\Controllers\ParaleloController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\HorarioController;
+use App\Http\Controllers\DocenteVistaController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -104,6 +105,6 @@ Route::post('/generate-schedules', [HorarioController::class, 'generateSchedules
 Route::get('/mis-horarios', [DocenteController::class, 'showHorarios'])->name('mis.horarios');
 Route::post('/generar-horarios', [HorarioController::class, 'generarHorarios'])->name('generar.horarios');
 Route::get('/exportar-horarios', [HorarioController::class, 'exportarHorarios'])->name('exportar.horarios');
-Route::get('/docentevista', [DocenteController::class, 'index'])->name('docentevista.index');
+Route::get('/docentevista', [DocenteVistaController::class, 'index'])->name('docentevista.index');
 Route::get('/horarios/generar', [HorarioController::class, 'generar'])->name('horarios.generar');
 

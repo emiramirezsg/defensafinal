@@ -2,13 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 
-class DocenteVIstaController extends Controller
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use App\Models\Docente;
+
+
+class DocenteVistaController extends Controller
 {
     public function index()
     {
-        return view('docentes.index', compact('docentes'));
+        $docente = Auth::user();
+        $docentes = Docente::all();
+        $horarios = $docente->horarios;
+        return view('docentevista.index', compact('docentes'));
     }
     
 }
