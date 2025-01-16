@@ -59,7 +59,7 @@
 					</div>
 					<div class="card-footer">
 						<div class="d-flex justify-content-center links">
-							<p>¿Ya tienes una cuenta?<a href="{{route('login')}}">Iniciar sesion</a></p>
+							<p>¿Ya tienes una cuenta?<a href="{{route('login')}}">Iniciar sesión</a></p>
 						</div>
 					</div>
 				</div>
