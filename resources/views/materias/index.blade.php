@@ -174,7 +174,7 @@
                                             <input type="text" id="nombre-{{ $materia->id }}" name="nombre" value="{{ $materia->nombre }}" class="form-control" required>
                                         </div>
                                         <div class="form-group">
-                                            <label for="horas_semana">Horas Mensuales:</label>
+                                            <label for="horas_semana">Horas a la semana:</label>
                                             <input type="number" name="horas_semana" id="horas_semana" value="{{ $materia->horas_semana }}" required>
                                         </div>
                                         <div class="form-group">
