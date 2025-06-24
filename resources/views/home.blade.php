@@ -244,6 +244,7 @@
                 <h2>Horarios</h2>
                 <div class="card-actions">
                     <a href="{{ route('horarios.index') }}" class="btn btn-view">Ver</a>
+                    <a href="{{ route('horarios.generar') }}" class="btn btn-manage">Generar horario</a>
                 </div>
             </div>
         </div>

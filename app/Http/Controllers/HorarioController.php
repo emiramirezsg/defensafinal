@@ -6,7 +6,6 @@ use App\Models\Curso;
 use App\Models\Horario;
 use App\Models\Materia;
 use App\Models\Paralelo;
-use App\Models\Docente;
 use App\Models\Periodo;
 use Exception;
 use Illuminate\Http\Request;
@@ -123,5 +122,4 @@ public function generarHorarios(Request $request)
         return response()->json(['status' => 'error', 'message' => $e->getMessage()], 500);
     }
 }
-
 }

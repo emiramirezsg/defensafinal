@@ -87,49 +87,23 @@
     </style>
 </head>
 <body>
-    <div class="header">
-        <a href="{{ route('home') }}" class="btn btn-regresar">Inicio</a>
-    </div>
-
-    <div class="container">
-        <h1>Horario Escolar</h1>
-
-        <div class="action-buttons">
-            <a href="#" class="btn btn-agregar">Generar Horarios</a>
-
-            <!-- Filtro de Docente -->
-            <form method="GET" action="{{ route('horarios.index') }}" style="margin-top: 20px;">
-                <label for="docente">Seleccionar Docente:</label>
-                <select name="docente_id" id="docente">
-                    <option value="">Seleccionar Docente</option>
-                    @foreach($docentes as $docente)
-                        <option value="{{ $docente->id }}" {{ request('docente_id') == $docente->id ? 'selected' : '' }}>
-                            {{ $docente->nombre }} {{ $docente->apellido }}
-                        </option>
-                    @endforeach
-                </select>
-                <button type="submit" class="btn btn-agregar">Filtrar</button>
-            </form>
-        </div>
-
-        <div class="horario-table">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Hora / Día</th>
-                        <th>Lunes</th>
-                        <th>Martes</th>
-                        <th>Miércoles</th>
-                        <th>Jueves</th>
-                        <th>Viernes</th>
-                    </tr>
-                </thead>
-                <tbody id="horario-body">
-                    <!-- Sección dinámica de horarios -->
-                </tbody>
-            </table>
-        </div>
-    </div>
+    <h1>Horario Escolar</h1>
+    <div id="data-container"
+     data-periodos='@json($periodos)'
+     data-horarios='@json($horarios)'
+     data-paralelos='@json($paralelos)'>
+</div>
+    <button id="generar-horarios">Generar Horarios</button>
+    <table>
+        <thead>
+            <tr>
+                <th>Día</th>
+                <th>Horario</th>
+            </tr>
+        </thead>
+        <tbody id="horario-body">}
+        </tbody>
+    </table>
 
     <script>
     function renderTable(data) {
@@ -192,47 +166,35 @@
         });
     }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const tbody = document.getElementById('horario-body');
-            const periodos = @json($periodos);
-            const horarios = @json($horarios);
-            const paralelos = @json($paralelos);
+    document.addEventListener('DOMContentLoaded', function () {
+        const container = document.getElementById('data-container');
+        const data = {
+            periodos: JSON.parse(container.getAttribute('data-periodos')),
+            horarios: JSON.parse(container.getAttribute('data-horarios')),
+            paralelos: JSON.parse(container.getAttribute('data-paralelos')),
+        };
+        renderTable(data);
+    });
 
-            const horariosPorDia = { lunes: [], martes: [], miercoles: [], jueves: [], viernes: [] };
+    document.getElementById('generar-horarios').addEventListener('click', function () {
+        fetch("{{ route('generar.horarios') }}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": "{{ csrf_token() }}"
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                renderTable(data);
+            } else {
+                console.error('Error al generar horarios:', data);
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    });
+</script>
 
-            periodos.forEach(periodo => {
-                const dia = periodo.dia.toLowerCase();
-                const horario = horarios.find(h => h.id === periodo.horario.id);
-                const paralelo = paralelos.find(p => p.id === periodo.paralelo.id);
-
-                if (horariosPorDia[dia]) {
-                    horariosPorDia[dia].push({
-                        hora: `${horario.hora_inicio} - ${horario.hora_fin}`,
-                        materia: periodo.docente.materia.nombre,
-                        curso: paralelo.curso.nombre,
-                        paralelo: paralelo.nombre
-                    });
-                }
-            });
-
-            horarios.forEach(h => {
-                const fila = document.createElement('tr');
-                const tdHora = document.createElement('td');
-                tdHora.textContent = `${h.hora_inicio} - ${h.hora_fin}`;
-                fila.appendChild(tdHora);
-
-                ['lunes', 'martes', 'miercoles', 'jueves', 'viernes'].forEach(dia => {
-                    const td = document.createElement('td');
-                    const periodoDia = horariosPorDia[dia].find(p => p.hora === `${h.hora_inicio} - ${h.hora_fin}`);
-                    td.innerHTML = periodoDia
-                        ? `${periodoDia.materia} (${periodoDia.curso})<br><small>${periodoDia.paralelo}</small>`
-                        : '';
-                    fila.appendChild(td);
-                });
-
-                tbody.appendChild(fila);
-            });
-        });
-    </script>
 </body>
 </html>

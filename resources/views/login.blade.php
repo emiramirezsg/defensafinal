@@ -19,7 +19,11 @@
 			<div class="d-flex justify-content-center h-100">
 				<div class="card">
 					<div class="card-header">
+<<<<<<< HEAD
 						<h3>Iniciar Sesión</h3>
+=======
+						<h3>Iniciar Sesion</h3>
+>>>>>>> 49e2db9 (cambios)
 					</div>
 					<div class="card-body">
 						@if($errors->any())

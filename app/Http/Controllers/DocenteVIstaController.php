@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+<<<<<<< HEAD
 use Illuminate\Support\Facades\Auth;
 use App\Models\Horario;
 use App\Models\Docente;
@@ -53,3 +54,14 @@ class DocenteVistaController extends Controller
 
 }
 
+=======
+
+class DocenteVIstaController extends Controller
+{
+    public function index()
+    {
+        return view('docentevista.index');
+    }
+
+}
+>>>>>>> 49e2db9 (cambios)
