@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Horario Escolar</title>
     <style>
-        /* Estilos */
         body {
             font-family: Arial, sans-serif;
             background: url('https://www.orientacionandujar.es/wp-content/uploads/2020/08/fondos-para-clases-virtuales-1.jpg') no-repeat center center fixed;
@@ -14,18 +13,17 @@
             padding: 20px;
         }
 
-        h1 {
-            text-align: center;
-            color: #333;
-        }
-
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            background-color: rgba(255, 255, 255, 0.8);
+            background-color: rgba(255, 255, 255, 0.9);
             padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
         }
 
         table {
@@ -45,79 +43,59 @@
             background-color: #f4f4f4;
         }
 
-        .btn {
-            display: inline-block;
-            padding: 10px 20px;
-            border-radius: 4px;
-            text-decoration: none;
-            font-size: 16px;
-            text-align: center;
-            transition: background-color 0.3s ease;
-        }
-
-        .btn-agregar {
-            background-color: #007bff;
-            color: #fff;
-        }
-
-        .btn-agregar:hover {
-            background-color: #0056b3;
-        }
-
-        .header {
-            display: flex;
-            justify-content: flex-end;
-            padding: 10px;
+        small {
+            color: #555;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Horario Escolar</h1>
-
-        <!-- Filtro de Docente -->
-        <form method="GET" action="{{ route('horarios.index') }}" style="margin-top: 20px;">
-            <label for="docente">Seleccionar Docente:</label>
-            <select name="docente_id" id="docente">
-                <option value="">Seleccionar Docente</option>
-                @foreach($docentes as $docente)
-                    <option value="{{ $docente->id }}" {{ request('docente_id') == $docente->id ? 'selected' : '' }}>
-                        {{ $docente->nombre }} {{ $docente->apellido }}
-                    </option>
-                @endforeach
-            </select>
-            <button type="submit" class="btn btn-agregar">Filtrar</button>
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 20px; background-color: rgba(255, 255, 255, 0.9); border-radius: 0 0 10px 10px;">
+        <!-- Botón Logout -->
+        <form action="{{ route('logout') }}" method="POST">
+            @csrf
+            <button type="submit" style="background-color: #e74c3c; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer;">
+                Cerrar sesión
+            </button>
         </form>
 
-        <!-- Tabla de Horarios -->
-        <div class="horario-table">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Hora / Día</th>
-                        <th>Lunes</th>
-                        <th>Martes</th>
-                        <th>Miércoles</th>
-                        <th>Jueves</th>
-                        <th>Viernes</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($horariosPorDia as $dia => $horarios)
-                        @foreach($horarios as $horario)
-                            <tr>
-                                <td>{{ $horario['hora'] }}</td>
-                                <td>{{ $dia == 'lunes' ? $horario['materia'].'<br><small>'.$horario['curso'].' ('.$horario['paralelo'].')</small>' : '' }}</td>
-                                <td>{{ $dia == 'martes' ? $horario['materia'].'<br><small>'.$horario['curso'].' ('.$horario['paralelo'].')</small>' : '' }}</td>
-                                <td>{{ $dia == 'miercoles' ? $horario['materia'].'<br><small>'.$horario['curso'].' ('.$horario['paralelo'].')</small>' : '' }}</td>
-                                <td>{{ $dia == 'jueves' ? $horario['materia'].'<br><small>'.$horario['curso'].' ('.$horario['paralelo'].')</small>' : '' }}</td>
-                                <td>{{ $dia == 'viernes' ? $horario['materia'].'<br><small>'.$horario['curso'].' ('.$horario['paralelo'].')</small>' : '' }}</td>
-                            </tr>
-                        @endforeach
-                    @endforeach
-                </tbody>
-            </table>
+        <!-- Nombre del usuario -->
+        <div style="font-weight: bold; color: #333;">
+            {{ Auth::user()->name }}
         </div>
     </div>
+
+    <div class="container">
+        
+        <h1>Horario Escolar</h1>
+
+        <table> 
+            <thead>
+                <tr>
+                    <th>Hora / Día</th>
+                    <th>Lunes</th>
+                    <th>Martes</th>
+                    <th>Miércoles</th>
+                    <th>Jueves</th>
+                    <th>Viernes</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($horariosPorHora as $hora => $dias)
+                    <tr>
+                        <td><strong>{{ $hora }}</strong></td>
+                        @foreach(['lunes', 'martes', 'miercoles', 'jueves', 'viernes'] as $dia)
+                            <td>
+                                @if($dias[$dia])
+                                    {{ $dias[$dia]->docente->materia->nombre }}<br>
+                                    <small>{{ $dias[$dia]->paralelo->curso->nombre }} ({{ $dias[$dia]->paralelo->nombre }})</small>
+                                @else
+                                    -
+                                @endif
+                            </td>
+                        @endforeach
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
 </body>
-</html>
